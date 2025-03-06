@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, useScroll } from 'framer-motion';
+import { motion, useScroll, HTMLMotionProps } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
@@ -271,18 +271,20 @@ export default function AboutPage() {
   const currentLang = pathname.split('/')[1] || 'tr';
   const t = translations[currentLang as keyof typeof translations];
   
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef as React.RefObject<HTMLElement>,
+    target: containerRef,
     offset: ["start end", "end start"]
   });
 
+  const motionProps: HTMLMotionProps<"div"> = {
+    style: { opacity: scrollYProgress },
+    className: "pt-20",
+    ref: containerRef
+  };
+
   return (
-    <motion.div 
-      style={{ opacity: scrollYProgress }} 
-      className="pt-20" 
-      ref={containerRef as React.RefObject<HTMLElement>}
-    >
+    <motion.div {...motionProps}>
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image

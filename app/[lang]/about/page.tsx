@@ -1,10 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 import type { AboutPageTranslations, SupportedLanguages } from '@/types/common';
+
+// Create a properly typed motion component
+const MotionDiv = motion.div;
 
 const translations: Record<SupportedLanguages, AboutPageTranslations> = {
   tr: {
@@ -60,6 +63,7 @@ export default function About() {
   }
 
   return (
+    // Use a regular div instead of motion.div for the container
     <div className="pt-20" ref={containerRef}>
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
@@ -102,7 +106,7 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {t.stats.map((stat, index) => (
-              <motion.div
+              <MotionDiv
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -112,7 +116,7 @@ export default function About() {
               >
                 <h3 className="text-4xl font-bold text-primary mb-2">{stat.number}</h3>
                 <p className="text-gray-600">{stat.label}</p>
-              </motion.div>
+              </MotionDiv>
             ))}
           </div>
         </div>
@@ -121,7 +125,7 @@ export default function About() {
       {/* Mission Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -131,7 +135,7 @@ export default function About() {
             <p className="text-gray-600 mb-8">{t.mission.description}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {t.mission.values.map((value, index) => (
-                <motion.div
+                <MotionDiv
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -140,17 +144,17 @@ export default function About() {
                   className="p-4 bg-white rounded-lg shadow"
                 >
                   {value}
-                </motion.div>
+                </MotionDiv>
               ))}
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
       {/* Vision Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -158,7 +162,7 @@ export default function About() {
           >
             <h2 className="text-3xl font-bold mb-6">{t.vision.title}</h2>
             <p className="text-gray-600">{t.vision.description}</p>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
     </div>

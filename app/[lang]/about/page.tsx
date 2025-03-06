@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, useScroll } from 'framer-motion';
+import { motion, useScroll, HTMLMotionProps } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
@@ -273,18 +273,20 @@ export default function AboutPage() {
   
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef as React.RefObject<HTMLElement>,
+    target: containerRef,
     offset: ["start end", "end start"]
   });
 
+  const mainProps: HTMLMotionProps<"main"> = {
+    style: { opacity: scrollYProgress },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    ref: containerRef,
+    className: "pt-20"
+  };
+
   return (
-    <motion.main
-      style={{ opacity: scrollYProgress }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      ref={containerRef}
-      className="pt-20"
-    >
+    <motion.main {...mainProps}>
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image
@@ -295,8 +297,7 @@ export default function AboutPage() {
           priority
           quality={100}
         />
-        
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary-dark/90 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary-dark/90 mix-blend-multiply" />
         
         <div className="container mx-auto px-4 h-full relative z-10">
           <div className="h-full flex flex-col justify-center">

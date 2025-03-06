@@ -1,9 +1,27 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import PageWrapper from '@/components/PageWrapper';
+import { getOptimizedImageProps } from '@/utils/image';
+import type { BasePageProps, TranslationBase } from '@/types/common';
+
+interface ContactTranslations extends TranslationBase {
+  form: {
+    title: string;
+    success: string;
+    error: string;
+  };
+  // ... diğer translation tipleri
+}
+
+const translations: Record<string, ContactTranslations> = {
+  tr: {
+    // ... mevcut translations
+  }
+};
 
 const DEFAULT_LANG = 'tr';
 
@@ -660,41 +678,18 @@ function getSocialBgColor(platform: string) {
   return colors[platform as keyof typeof colors] || "bg-gray-100 text-gray-500";
 }
 
-export default function ContactPage() {
+export default function ContactPage({ params }: BasePageProps) {
   const pathname = usePathname();
-  const containerRef = useRef<HTMLElement>(null);
-  const [formData, setFormData] = useState({});
-  const [_isSubmitting, _setIsSubmitting] = useState(false);
-  
-  // Early return öncesi hooks'ları taşı
-  if (!pathname) {
-    return <div>Loading...</div>;
-  }
+  const [formStatus, setFormStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  // Dil kodunu güvenli bir şekilde alalım
-  const langFromPath = pathname.split('/')[1];
-  console.log('Language from path:', langFromPath);
+  // Dil kodunu güvenli bir şekilde al
+  const currentLang = (params.lang in translations) ? params.lang : 'tr';
+  const t = translations[currentLang];
 
-  // Geçerli bir dil kodu mu kontrol edelim
-  const isValidLang = langFromPath && langFromPath in translations;
-  const currentLang = isValidLang ? langFromPath : DEFAULT_LANG;
-  console.log('Current language:', currentLang);
-
-  // Translation objesini güvenli bir şekilde alalım
-  const t = translations[currentLang as keyof typeof translations];
-  console.log('Translation object:', t);
-
-  // Translation objesi veya gerekli alanlar eksikse
-  if (!t || !t.hero || !t.hero.title) {
-    console.error('Missing translation data:', {
-      currentLang,
-      hasTranslation: !!t,
-      hasHero: !!t?.hero,
-      hasTitle: !!t?.hero?.title
-    });
+  if (!t || !t.hero) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Content is loading...</p>
+        <p>Loading translations...</p>
       </div>
     );
   }
@@ -706,230 +701,39 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="pt-20" ref={containerRef}>
-      {/* Hero Section */}
-      <section className="relative h-[60vh] overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3"
-          alt={t.hero.title}
-          fill
-          className="object-cover"
-          priority
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary-dark/90 mix-blend-multiply" />
-        <div className="container mx-auto px-4 h-full relative z-10">
-          <div className="h-full flex flex-col justify-center text-white">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-5xl font-bold mb-4"
-            >
-              {t.hero.title}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl"
-            >
-              {t.hero.subtitle}
-            </motion.p>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Info Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl font-bold text-center mb-12"
-          >
-            {t.contactInfo.title}
-          </motion.h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {t.contactInfo.departments.map((dept, index) => (
-              <motion.div
-                key={dept.name}
+    <PageWrapper>
+      <main className="pt-20">
+        {/* Hero Section */}
+        <section className="relative h-[60vh] overflow-hidden">
+          <Image
+            {...getOptimizedImageProps(
+              "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3",
+              t.hero.title
+            )}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary-dark/90 mix-blend-multiply" />
+          <div className="container mx-auto px-4 h-full relative z-10">
+            <div className="h-full flex flex-col justify-center text-white">
+              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white p-6 rounded-lg shadow-lg"
+                animate={{ opacity: 1, y: 0 }}
+                className="text-5xl font-bold mb-4"
               >
-                <h3 className="text-xl font-semibold mb-4">{dept.name}</h3>
-                <div className="space-y-2 text-gray-600">
-                  <p>{dept.address}</p>
-                  <p>{dept.phone}</p>
-                  <p>{dept.email}</p>
-                  <p>{dept.workHours}</p>
-                </div>
-              </motion.div>
-            ))}
+                {t.hero.title}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-xl"
+              >
+                {t.hero.subtitle}
+              </motion.p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Contact Form Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="max-w-3xl mx-auto"
-          >
-            <h2 className="text-3xl font-bold text-center mb-8">{t.form.title}</h2>
-            <p className="text-center text-gray-600 mb-12">{t.form.description}</p>
-            
-            <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-                    {t.form.fields.name}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
-                                 focus:ring-4 focus:ring-primary/20 focus:border-primary 
-                                 transition-all duration-300 outline-none"
-                      placeholder={t.form.placeholders.name}
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">👤</div>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-                    {t.form.fields.email}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
-                                 focus:ring-4 focus:ring-primary/20 focus:border-primary 
-                                 transition-all duration-300 outline-none"
-                      placeholder={t.form.placeholders.email}
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">✉️</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-                    {t.form.fields.phone}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
-                                 focus:ring-4 focus:ring-primary/20 focus:border-primary 
-                                 transition-all duration-300 outline-none"
-                      placeholder={t.form.placeholders.phone}
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">📱</div>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-                    {t.form.fields.department}
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={formData.department}
-                      onChange={(e) => setFormData({...formData, department: e.target.value})}
-                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
-                                 focus:ring-4 focus:ring-primary/20 focus:border-primary 
-                                 transition-all duration-300 outline-none appearance-none"
-                    >
-                      <option value="">{t.form.placeholders.selectDepartment}</option>
-                      {t.form.departments.map((dept) => (
-                        <option key={dept} value={dept}>{dept}</option>
-                      ))}
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">🏢</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group">
-                <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-                  {t.form.fields.message}
-                </label>
-                <textarea
-                  required
-                  rows={5}
-                  value={formData.message}
-                  onChange={(e) => setFormData({...formData, message: e.target.value})}
-                  className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
-                             focus:ring-4 focus:ring-primary/20 focus:border-primary 
-                             transition-all duration-300 outline-none resize-none"
-                  placeholder={t.form.placeholders.message}
-                />
-              </div>
-
-              <div className="group">
-                <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
-                  {t.form.fields.attachment}
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    onChange={(e) => setFormData({...formData, attachment: e.target.files?.[0] || null})}
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
-                               focus:ring-4 focus:ring-primary/20 focus:border-primary 
-                               transition-all duration-300 outline-none file:mr-4 
-                               file:py-2 file:px-4 file:rounded-full file:border-0 
-                               file:text-sm file:bg-primary/10 file:text-primary 
-                               hover:file:bg-primary/20"
-                  />
-                </div>
-              </div>
-
-              <div className="text-center">
-                <button
-                  type="submit"
-                  className="inline-flex items-center px-8 py-4 bg-primary text-white 
-                             rounded-xl hover:bg-primary-dark transform hover:scale-105 
-                             transition-all duration-300 shadow-lg hover:shadow-xl 
-                             hover:shadow-primary/20"
-                >
-                  <span>{t.form.submit}</span>
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </button>
-              </div>
-
-              {formStatus === 'success' && (
-                <div className="bg-green-50 text-green-700 p-4 rounded-xl text-center animate-fade-in">
-                  {t.form.success}
-                </div>
-              )}
-              {formStatus === 'error' && (
-                <div className="bg-red-50 text-red-700 p-4 rounded-xl text-center animate-fade-in">
-                  {t.form.error}
-                </div>
-              )}
-            </form>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Support Channels Section */}
-      {t.support && (
+        {/* Contact Info Section */}
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <motion.h2
@@ -937,106 +741,297 @@ export default function ContactPage() {
               whileInView={{ opacity: 1, y: 0 }}
               className="text-3xl font-bold text-center mb-12"
             >
-              {t.support.title}
+              {t.contactInfo.title}
             </motion.h2>
             <div className="grid md:grid-cols-3 gap-8">
-              {t.support.channels.map((channel, index) => (
+              {t.contactInfo.departments.map((dept, index) => (
                 <motion.div
-                  key={channel.name}
+                  key={dept.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-white p-6 rounded-lg shadow-lg text-center"
+                  className="bg-white p-6 rounded-lg shadow-lg"
                 >
-                  <div className="text-4xl mb-4">{channel.icon}</div>
-                  <h3 className="text-xl font-semibold mb-2">{channel.name}</h3>
-                  <p className="text-gray-600">{channel.description}</p>
-                  {channel.available && (
-                    <span className="inline-block mt-4 px-4 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                      {currentLang === 'tr' ? 'Aktif' : 'Active'}
-                    </span>
-                  )}
+                  <h3 className="text-xl font-semibold mb-4">{dept.name}</h3>
+                  <div className="space-y-2 text-gray-600">
+                    <p>{dept.address}</p>
+                    <p>{dept.phone}</p>
+                    <p>{dept.email}</p>
+                    <p>{dept.workHours}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
-      )}
 
-      {/* FAQ Section */}
-      {t.faq && (
+        {/* Contact Form Section */}
         <section className="py-20">
           <div className="container mx-auto px-4">
-            <motion.h2
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-3xl font-bold text-center mb-12"
+              className="max-w-3xl mx-auto"
             >
-              {t.faq.title}
-            </motion.h2>
-            <div className="max-w-3xl mx-auto">
-              {t.faq.questions?.map((faq, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="mb-6"
-                >
-                  <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
-                  <p className="text-gray-600">{faq.answer}</p>
-                </motion.div>
-              ))}
-            </div>
+              <h2 className="text-3xl font-bold text-center mb-8">{t.form.title}</h2>
+              <p className="text-center text-gray-600 mb-12">{t.form.description}</p>
+              
+              <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="group">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+                      {t.form.fields.name}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
+                                   focus:ring-4 focus:ring-primary/20 focus:border-primary 
+                                   transition-all duration-300 outline-none"
+                        placeholder={t.form.placeholders.name}
+                      />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">👤</div>
+                    </div>
+                  </div>
+
+                  <div className="group">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+                      {t.form.fields.email}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
+                                   focus:ring-4 focus:ring-primary/20 focus:border-primary 
+                                   transition-all duration-300 outline-none"
+                        placeholder={t.form.placeholders.email}
+                      />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">✉️</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="group">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+                      {t.form.fields.phone}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
+                                   focus:ring-4 focus:ring-primary/20 focus:border-primary 
+                                   transition-all duration-300 outline-none"
+                        placeholder={t.form.placeholders.phone}
+                      />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">📱</div>
+                    </div>
+                  </div>
+
+                  <div className="group">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+                      {t.form.fields.department}
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={formData.department}
+                        onChange={(e) => setFormData({...formData, department: e.target.value})}
+                        className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
+                                   focus:ring-4 focus:ring-primary/20 focus:border-primary 
+                                   transition-all duration-300 outline-none appearance-none"
+                      >
+                        <option value="">{t.form.placeholders.selectDepartment}</option>
+                        {t.form.departments.map((dept) => (
+                          <option key={dept} value={dept}>{dept}</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">🏢</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+                    {t.form.fields.message}
+                  </label>
+                  <textarea
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
+                               focus:ring-4 focus:ring-primary/20 focus:border-primary 
+                               transition-all duration-300 outline-none resize-none"
+                    placeholder={t.form.placeholders.message}
+                  />
+                </div>
+
+                <div className="group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 group-hover:text-primary transition-colors">
+                    {t.form.fields.attachment}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      onChange={(e) => setFormData({...formData, attachment: e.target.files?.[0] || null})}
+                      className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl 
+                                 focus:ring-4 focus:ring-primary/20 focus:border-primary 
+                                 transition-all duration-300 outline-none file:mr-4 
+                                 file:py-2 file:px-4 file:rounded-full file:border-0 
+                                 file:text-sm file:bg-primary/10 file:text-primary 
+                                 hover:file:bg-primary/20"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center px-8 py-4 bg-primary text-white 
+                               rounded-xl hover:bg-primary-dark transform hover:scale-105 
+                               transition-all duration-300 shadow-lg hover:shadow-xl 
+                               hover:shadow-primary/20"
+                  >
+                    <span>{t.form.submit}</span>
+                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </button>
+                </div>
+
+                {formStatus === 'success' && (
+                  <div className="bg-green-50 text-green-700 p-4 rounded-xl text-center animate-fade-in">
+                    {t.form.success}
+                  </div>
+                )}
+                {formStatus === 'error' && (
+                  <div className="bg-red-50 text-red-700 p-4 rounded-xl text-center animate-fade-in">
+                    {t.form.error}
+                  </div>
+                )}
+              </form>
+            </motion.div>
           </div>
         </section>
-      )}
 
-      {/* Social Media Section */}
-      {t.social && (
-        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-3xl font-bold text-center mb-4"
-            >
-              {t.social.title}
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-gray-600 text-center mb-12"
-            >
-              {t.social.description}
-            </motion.p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              {t.social.platforms.map((platform, index) => (
-                <motion.a
-                  key={platform.name}
-                  href={platform.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl 
-                             transition-all duration-300 text-center border border-gray-100"
-                >
-                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center 
+        {/* Support Channels Section */}
+        {t.support && (
+          <section className="py-20 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-3xl font-bold text-center mb-12"
+              >
+                {t.support.title}
+              </motion.h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                {t.support.channels.map((channel, index) => (
+                  <motion.div
+                    key={channel.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white p-6 rounded-lg shadow-lg text-center"
+                  >
+                    <div className="text-4xl mb-4">{channel.icon}</div>
+                    <h3 className="text-xl font-semibold mb-2">{channel.name}</h3>
+                    <p className="text-gray-600">{channel.description}</p>
+                    {channel.available && (
+                      <span className="inline-block mt-4 px-4 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                        {currentLang === 'tr' ? 'Aktif' : 'Active'}
+                      </span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* FAQ Section */}
+        {t.faq && (
+          <section className="py-20">
+            <div className="container mx-auto px-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-3xl font-bold text-center mb-12"
+              >
+                {t.faq.title}
+              </motion.h2>
+              <div className="max-w-3xl mx-auto">
+                {t.faq.questions?.map((faq, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="mb-6"
+                  >
+                    <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
+                    <p className="text-gray-600">{faq.answer}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Social Media Section */}
+        {t.social && (
+          <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+            <div className="container mx-auto px-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-3xl font-bold text-center mb-4"
+              >
+                {t.social.title}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-gray-600 text-center mb-12"
+              >
+                {t.social.description}
+              </motion.p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                {t.social.platforms.map((platform, index) => (
+                  <motion.a
+                    key={platform.name}
+                    href={platform.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl 
+                               transition-all duration-300 text-center border border-gray-100"
+                  >
+                    <div className={`w-16 h-16 mx-auto rounded-full flex items-center 
                                   justify-center ${getSocialBgColor(platform.icon)} 
                                   transition-colors duration-300`}>
-                    {SocialIcons[platform.icon as keyof typeof SocialIcons]}
-                  </div>
-                  <h3 className="text-lg font-semibold mt-4">{platform.name}</h3>
-                  <p className="text-sm text-gray-500 mt-2">{platform.description}</p>
-                </motion.a>
-              ))}
+                      {SocialIcons[platform.icon as keyof typeof SocialIcons]}
+                    </div>
+                    <h3 className="text-lg font-semibold mt-4">{platform.name}</h3>
+                    <p className="text-sm text-gray-500 mt-2">{platform.description}</p>
+                  </motion.a>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
-    </main>
+          </section>
+        )}
+      </main>
+    </PageWrapper>
   );
 }

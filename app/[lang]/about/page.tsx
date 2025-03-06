@@ -3,13 +3,9 @@
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useRef } from 'react';
-import type { AboutPageTranslations, SupportedLanguages } from '@/types/common';
-import type { MotionDivProps } from '@/types/motion';
+import type { SupportedLanguages } from '@/types/common';
 
-const MotionDiv = motion.div as React.FC<MotionDivProps>;
-
-const translations: Record<SupportedLanguages, AboutPageTranslations> = {
+const translations = {
   tr: {
     hero: {
       title: "25 Yıllık Tecrübe, Sonsuz Güven",
@@ -29,40 +25,44 @@ const translations: Record<SupportedLanguages, AboutPageTranslations> = {
     vision: {
       title: "Vizyonumuz",
       description: "Global kimya sektöründe sürdürülebilir büyüme..."
-    },
-    history: {
-      title: "Tarihçemiz",
-      timeline: [
-        {
-          year: "1998",
-          title: "Kuruluş",
-          description: "Şirketimizin temelleri atıldı"
-        }
-        // ... diğer timeline öğeleri
-      ]
     }
   },
-  en: { /* İngilizce çeviriler */ },
-  de: { /* Almanca çeviriler */ },
-  ru: { /* Rusça çeviriler */ },
-  ar: { /* Arapça çeviriler */ }
-};
+  en: {
+    hero: {
+      title: "25 Years of Experience, Endless Trust",
+      subtitle: "Our quarter-century journey in the chemical industry"
+    },
+    stats: [
+      { number: "25+", label: "Years Experience" },
+      { number: "1000+", label: "Products" },
+      { number: "50+", label: "Export Countries" },
+      { number: "5000+", label: "Happy Clients" }
+    ],
+    mission: {
+      title: "Our Mission",
+      description: "With world-class quality and reliability principles...",
+      values: ["Customer Focus", "Sustainability", "Innovation", "Quality"]
+    },
+    vision: {
+      title: "Our Vision",
+      description: "Sustainable growth in the global chemical industry..."
+    }
+  }
+} as const;
 
 export default function About() {
   const pathname = usePathname();
   const currentLang = (pathname?.split('/')[1] as SupportedLanguages) || 'tr';
-  const t = translations[currentLang];
+  const t = translations[currentLang as keyof typeof translations];
 
-  if (!t || !t.hero) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading translations...</p>
-      </div>
-    );
-  }
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+  };
 
   return (
-    <div className="pt-20">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image
@@ -79,18 +79,15 @@ export default function About() {
         <div className="container mx-auto px-4 h-full relative z-10">
           <div className="h-full flex flex-col justify-center">
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              {...fadeInUp}
               className="text-5xl md:text-7xl font-bold text-white mb-6"
             >
               {t.hero.title}
             </motion.h1>
             
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              {...fadeInUp}
+              transition={{ delay: 0.2 }}
               className="text-xl text-gray-100"
             >
               {t.hero.subtitle}
@@ -104,17 +101,19 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {t.stats.map((stat, index) => (
-              <MotionDiv
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <h3 className="text-4xl font-bold text-primary mb-2">{stat.number}</h3>
+                <h3 className="text-4xl font-bold text-primary mb-2">
+                  {stat.number}
+                </h3>
                 <p className="text-gray-600">{stat.label}</p>
-              </MotionDiv>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -123,7 +122,7 @@ export default function About() {
       {/* Mission Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -133,26 +132,26 @@ export default function About() {
             <p className="text-gray-600 mb-8">{t.mission.description}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {t.mission.values.map((value, index) => (
-                <MotionDiv
+                <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ delay: index * 0.1 }}
                   className="p-4 bg-white rounded-lg shadow"
                 >
                   {value}
-                </MotionDiv>
+                </motion.div>
               ))}
             </div>
-          </MotionDiv>
+          </motion.div>
         </div>
       </section>
 
       {/* Vision Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -160,7 +159,7 @@ export default function About() {
           >
             <h2 className="text-3xl font-bold mb-6">{t.vision.title}</h2>
             <p className="text-gray-600">{t.vision.description}</p>
-          </MotionDiv>
+          </motion.div>
         </div>
       </section>
     </div>

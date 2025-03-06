@@ -584,7 +584,7 @@ export default function AboutPage() {
   console.log('Translation object:', t);
   
   const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: _scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });

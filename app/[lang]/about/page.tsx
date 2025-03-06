@@ -1,7 +1,5 @@
-'use client';
-
 import { usePathname } from 'next/navigation';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
@@ -277,8 +275,10 @@ export default function AboutPage() {
     offset: ["start end", "end start"]
   });
 
+  const opacity = scrollYProgress;
+  
   return (
-    <main className="pt-20" ref={containerRef}>
+    <motion.main style={{ opacity }} className="pt-20" ref={containerRef}>
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image
@@ -489,6 +489,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </main>
+    </motion.main>
   );
 }

@@ -1,9 +1,6 @@
-'use client';
-
 import { usePathname } from 'next/navigation';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
 
 const translations = {
   tr: {

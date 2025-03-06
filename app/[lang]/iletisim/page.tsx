@@ -660,12 +660,14 @@ function getSocialBgColor(platform: string) {
   return colors[platform as keyof typeof colors] || "bg-gray-100 text-gray-500";
 }
 
-export default function Contact() {
+export default function ContactPage() {
   const pathname = usePathname();
+  const containerRef = useRef<HTMLElement>(null);
+  const [formData, setFormData] = useState({});
+  const [_isSubmitting, _setIsSubmitting] = useState(false);
   
-  // pathname null olabilir, o yüzden güvenli bir şekilde kontrol edelim
+  // Early return öncesi hooks'ları taşı
   if (!pathname) {
-    console.log('Pathname is null');
     return <div>Loading...</div>;
   }
 
@@ -696,19 +698,6 @@ export default function Contact() {
       </div>
     );
   }
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [formStatus, setFormStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    department: '',
-    subject: '',
-    message: '',
-    attachment: null as File | null
-  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

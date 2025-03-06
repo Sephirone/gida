@@ -3,9 +3,10 @@
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const translations = {
   tr: {

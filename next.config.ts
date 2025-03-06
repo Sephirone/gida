@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
     optimizeCss: false
   },
   images: {
-    domains: ['images.unsplash.com', 'cdn.logo.com', 'flagcdn.com']
+    domains: ['images.unsplash.com', 'cdn.logo.com', 'flagcdn.com'],
+    unoptimized: true // Eğer statik export kullanıyorsanız
   }
 };
 

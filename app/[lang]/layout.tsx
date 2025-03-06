@@ -43,12 +43,10 @@ export async function generateMetadata({ params }: { params: { lang: string } })
   };
 }
 
-export default function Layout({
+export default function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { lang: string };
 }) {
   return (
     <Providers>

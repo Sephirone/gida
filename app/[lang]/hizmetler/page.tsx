@@ -1,10 +1,7 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
+import { useRef } from 'react';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
 
 const translations = {
   tr: {
@@ -584,35 +581,20 @@ const translations = {
   }
 };
 
-export default function Services() {
-  const pathname = usePathname();
-  const currentLang = pathname.split('/')[1] || 'tr';
-  
-  // Geçerli dil kontrolü
-  if (!translations[currentLang as keyof typeof translations]) {
-    // Eğer geçersiz bir dil ise varsayılan olarak TR'ye yönlendir
-    return <div>Redirecting...</div>;
-  }
-
-  const t = translations[currentLang as keyof typeof translations];
-
-  // Veri kontrolü
-  if (!t || !t.hero) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  const containerRef = useRef(null);
+export default function ServicesPage() {
+  const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
+  // Early return öncesi hooks'ları taşı
+  if (!translations) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <main className="pt-20" ref={containerRef}>
+    <motion.main style={{ opacity: scrollYProgress }} className="pt-20" ref={containerRef}>
       {/* Hero Section */}
       <section className="relative h-[60vh] overflow-hidden">
         <Image
@@ -781,6 +763,6 @@ export default function Services() {
           </Link>
         </div>
       </section>
-    </main>
+    </motion.main>
   );
 }

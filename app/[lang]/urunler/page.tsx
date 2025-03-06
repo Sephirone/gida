@@ -1,10 +1,7 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
-import Link from 'next/link';
+import { Link as _Link } from 'next/link';
 
 const translations = {
   tr: {
@@ -710,7 +707,7 @@ export default function ProductsPage() {
   const t = translations[currentLang as keyof typeof translations];
   
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: _scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });

@@ -50,23 +50,13 @@ const translations = {
   }
 } as const;
 
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
-};
-
-export default function Hakkimizda() {
+export default function AboutPage() {
   const pathname = usePathname();
   const currentLang = (pathname?.split('/')[1] as SupportedLanguages) || 'tr';
   const t = translations[currentLang];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="pt-20"
-    >
+    <div className="pt-20">
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image
@@ -83,15 +73,18 @@ export default function Hakkimizda() {
         <div className="container mx-auto px-4 h-full relative z-10">
           <div className="h-full flex flex-col justify-center">
             <motion.h1
-              {...fadeIn}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
               className="text-5xl md:text-7xl font-bold text-white mb-6"
             >
               {t.hero.title}
             </motion.h1>
             
             <motion.p
-              {...fadeIn}
-              transition={{ delay: 0.2 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="text-xl text-gray-100"
             >
               {t.hero.subtitle}
@@ -113,9 +106,7 @@ export default function Hakkimizda() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <h3 className="text-4xl font-bold text-primary mb-2">
-                  {stat.number}
-                </h3>
+                <h3 className="text-4xl font-bold text-primary mb-2">{stat.number}</h3>
                 <p className="text-gray-600">{stat.label}</p>
               </motion.div>
             ))}
@@ -123,49 +114,46 @@ export default function Hakkimizda() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Mission & Vision Sections */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <h2 className="text-3xl font-bold mb-6">{t.mission.title}</h2>
-            <p className="text-gray-600 mb-8">{t.mission.description}</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {t.mission.values.map((value, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="p-4 bg-white rounded-lg shadow"
-                >
-                  {value}
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+          <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl font-bold mb-6">{t.mission.title}</h2>
+              <p className="text-gray-600 mb-8">{t.mission.description}</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {t.mission.values.map((value, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="p-4 bg-white rounded-lg shadow"
+                  >
+                    {value}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
-      {/* Vision Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <h2 className="text-3xl font-bold mb-6">{t.vision.title}</h2>
-            <p className="text-gray-600">{t.vision.description}</p>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <h2 className="text-3xl font-bold mb-6">{t.vision.title}</h2>
+              <p className="text-gray-600">{t.vision.description}</p>
+            </motion.div>
+          </div>
         </div>
       </section>
-    </motion.div>
+    </div>
   );
 }

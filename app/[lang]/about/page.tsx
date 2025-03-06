@@ -271,17 +271,22 @@ export default function AboutPage() {
   const currentLang = pathname.split('/')[1] || 'tr';
   const t = translations[currentLang as keyof typeof translations];
   
-  // Fix: Properly type the ref as HTMLElement
+  // Fix: Use MutableRefObject instead of RefObject
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    // Cast the ref to satisfy Framer Motion's type requirements
+    target: containerRef as React.RefObject<HTMLElement>,
     offset: ["start end", "end start"]
   });
 
   const opacity = scrollYProgress;
   
   return (
-    <motion.main style={{ opacity }} className="pt-20" ref={containerRef}>
+    <motion.main 
+      style={{ opacity }} 
+      className="pt-20" 
+      ref={containerRef as React.RefObject<HTMLElement>}
+    >
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image

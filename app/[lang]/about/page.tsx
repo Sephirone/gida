@@ -5,6 +5,9 @@ import { motion, useScroll, HTMLMotionProps } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
+// Type tanımlamaları
+type MotionMainProps = HTMLMotionProps<"main">;
+
 const translations = {
   tr: {
     hero: {
@@ -266,7 +269,7 @@ const translations = {
   }
 };
 
-export default function AboutPage() {
+export default function About() {
   const pathname = usePathname();
   const currentLang = pathname.split('/')[1] || 'tr';
   const t = translations[currentLang as keyof typeof translations];
@@ -277,12 +280,14 @@ export default function AboutPage() {
     offset: ["start end", "end start"]
   });
 
-  const mainProps: HTMLMotionProps<"main"> = {
-    style: { opacity: scrollYProgress },
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
+  const mainProps: MotionMainProps = {
     ref: containerRef,
-    className: "pt-20"
+    className: "pt-20",
+    style: { 
+      opacity: scrollYProgress 
+    },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 }
   };
 
   return (

@@ -1,13 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, HTMLMotionProps } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 import type { AboutPageTranslations, SupportedLanguages } from '@/types/common';
+import type { MotionDivProps } from '@/types/motion';
 
-// Create a properly typed motion component
-const MotionDiv = motion.div;
+const MotionDiv = motion.div as React.FC<MotionDivProps>;
 
 const translations: Record<SupportedLanguages, AboutPageTranslations> = {
   tr: {
@@ -52,7 +52,6 @@ export default function About() {
   const pathname = usePathname();
   const currentLang = (pathname?.split('/')[1] as SupportedLanguages) || 'tr';
   const t = translations[currentLang];
-  const containerRef = useRef<HTMLDivElement>(null);
 
   if (!t || !t.hero) {
     return (
@@ -63,8 +62,7 @@ export default function About() {
   }
 
   return (
-    // Use a regular div instead of motion.div for the container
-    <div className="pt-20" ref={containerRef}>
+    <div className="pt-20">
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image

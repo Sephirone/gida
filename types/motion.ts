@@ -1,5 +1,13 @@
 import { HTMLMotionProps } from 'framer-motion';
 
-export type MotionMainProps = HTMLMotionProps<"main">;
-export type MotionDivProps = HTMLMotionProps<"div">;
-export type MotionSectionProps = HTMLMotionProps<"section">;
+export interface MotionDivProps extends HTMLMotionProps<"div"> {
+    className?: string;
+}
+
+export interface MotionMainProps extends HTMLMotionProps<"main"> {
+    className?: string;
+}
+
+export interface MotionSectionProps extends HTMLMotionProps<"section"> {
+    className?: string;
+}

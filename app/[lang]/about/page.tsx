@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, useScroll } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 import type { AboutPageTranslations, SupportedLanguages } from '@/types/common';
@@ -56,16 +56,11 @@ export default function About() {
   const currentLang = (pathname?.split('/')[1] as SupportedLanguages) || 'tr';
   const t = translations[currentLang];
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll();
 
   return (
     <div className="pt-20">
-      <main ref={containerRef}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="w-full"
-        >
+      <main>
+        <div className="w-full">
           {/* Hero Section */}
           <section className="relative h-[80vh] overflow-hidden">
             <Image
@@ -81,13 +76,15 @@ export default function About() {
             <div className="container mx-auto px-4 h-full relative z-10">
               <div className="h-full flex flex-col justify-center">
                 <motion.h1
-                  {...fadeInUp}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className="text-5xl md:text-7xl font-bold text-white mb-6"
                 >
                   {t.hero.title}
                 </motion.h1>
                 <motion.p
-                  {...fadeInUp}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   className="text-xl text-gray-100"
                 >
@@ -192,7 +189,7 @@ export default function About() {
               </div>
             </div>
           </section>
-        </motion.div>
+        </div>
       </main>
     </div>
   );

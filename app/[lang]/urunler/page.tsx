@@ -3,7 +3,7 @@
 import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
-import Link from 'next/link';
+import { Link as _Link } from 'next/link';
 
 const translations = {
   tr: {

@@ -273,7 +273,7 @@ export default function AboutPage() {
   
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: containerRef as React.RefObject<HTMLElement>,
     offset: ["start end", "end start"]
   });
 

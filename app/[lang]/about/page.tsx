@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, HTMLMotionProps, MotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 import type { AboutPageTranslations, SupportedLanguages } from '@/types/common';
@@ -45,18 +45,6 @@ const translations: Record<SupportedLanguages, AboutPageTranslations> = {
   ar: { /* Arapça çeviriler */ }
 };
 
-// Define proper types for motion components
-type MotionDivProps = HTMLMotionProps<"div"> & {
-  style?: {
-    opacity?: MotionValue<number>;
-    y?: MotionValue<number>;
-    [key: string]: any;
-  };
-};
-
-// Create a properly typed motion component
-const MotionDiv = motion.div as React.FC<MotionDivProps>;
-
 export default function About() {
   const pathname = usePathname();
   const currentLang = (pathname?.split('/')[1] as SupportedLanguages) || 'tr';
@@ -72,12 +60,7 @@ export default function About() {
   }
 
   return (
-    <MotionDiv
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      ref={containerRef}
-      className="pt-20"
-    >
+    <div className="pt-20" ref={containerRef}>
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image
@@ -93,23 +76,23 @@ export default function About() {
         
         <div className="container mx-auto px-4 h-full relative z-10">
           <div className="h-full flex flex-col justify-center">
-            <MotionDiv
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="text-5xl md:text-7xl font-bold text-white mb-6"
             >
               {t.hero.title}
-            </MotionDiv>
+            </motion.h1>
             
-            <MotionDiv
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-xl text-gray-100"
             >
               {t.hero.subtitle}
-            </MotionDiv>
+            </motion.p>
           </div>
         </div>
       </section>
@@ -119,7 +102,7 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {t.stats.map((stat, index) => (
-              <MotionDiv
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -129,7 +112,7 @@ export default function About() {
               >
                 <h3 className="text-4xl font-bold text-primary mb-2">{stat.number}</h3>
                 <p className="text-gray-600">{stat.label}</p>
-              </MotionDiv>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -138,7 +121,7 @@ export default function About() {
       {/* Mission Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -148,7 +131,7 @@ export default function About() {
             <p className="text-gray-600 mb-8">{t.mission.description}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {t.mission.values.map((value, index) => (
-                <MotionDiv
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -157,17 +140,17 @@ export default function About() {
                   className="p-4 bg-white rounded-lg shadow"
                 >
                   {value}
-                </MotionDiv>
+                </motion.div>
               ))}
             </div>
-          </MotionDiv>
+          </motion.div>
         </div>
       </section>
 
       {/* Vision Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -175,9 +158,9 @@ export default function About() {
           >
             <h2 className="text-3xl font-bold mb-6">{t.vision.title}</h2>
             <p className="text-gray-600">{t.vision.description}</p>
-          </MotionDiv>
+          </motion.div>
         </div>
       </section>
-    </MotionDiv>
+    </div>
   );
 }

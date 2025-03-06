@@ -277,14 +277,14 @@ export default function AboutPage() {
     offset: ["start end", "end start"]
   });
 
-  const motionProps: HTMLMotionProps<"div"> = {
-    style: { opacity: scrollYProgress },
-    className: "pt-20",
-    ref: containerRef
-  };
-
   return (
-    <motion.div {...motionProps}>
+    <motion.div
+      style={{ opacity: scrollYProgress }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      ref={containerRef}
+      className="pt-20"
+    >
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image

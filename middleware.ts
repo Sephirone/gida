@@ -4,9 +4,10 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
-  // Map English "about" to Turkish "hakkimizda"
-  if (pathname.startsWith('/en/about')) {
-    return NextResponse.redirect(new URL('/en/hakkimizda', request.url))
+  // Redirect all about routes to hakkimizda
+  if (pathname.includes('/about')) {
+    const newPath = pathname.replace('/about', '/hakkimizda')
+    return NextResponse.redirect(new URL(newPath, request.url))
   }
 
   return NextResponse.next()
@@ -14,6 +15,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/en/about',
+    '/:lang/about',
+    '/:lang/about/:path*',
   ],
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, useScroll, HTMLMotionProps } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
@@ -278,7 +278,7 @@ export default function AboutPage() {
   });
 
   return (
-    <motion.div
+    <motion.main
       style={{ opacity: scrollYProgress }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -495,6 +495,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </motion.div>
+    </motion.main>
   );
 }

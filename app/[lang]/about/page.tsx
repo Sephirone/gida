@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 import type { AboutPageTranslations, SupportedLanguages } from '@/types/common';
@@ -55,16 +55,18 @@ export default function About() {
   const pathname = usePathname();
   const currentLang = (pathname?.split('/')[1] as SupportedLanguages) || 'tr';
   const t = translations[currentLang];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    container: containerRef
+  });
 
   return (
     <div className="pt-20">
-      <motion.div
+      <motion.main
         style={{ opacity: scrollYProgress }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         ref={containerRef}
-        className="pt-20"
-        as="div"
       >
         {/* Hero Section */}
         <section className="relative h-[80vh] overflow-hidden">
@@ -192,7 +194,7 @@ export default function About() {
             </div>
           </div>
         </section>
-      </motion.div>
+      </motion.main>
     </div>
   );
 }

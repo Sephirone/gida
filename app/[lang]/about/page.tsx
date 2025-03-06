@@ -271,19 +271,15 @@ export default function AboutPage() {
   const currentLang = pathname.split('/')[1] || 'tr';
   const t = translations[currentLang as keyof typeof translations];
   
-  // Fix: Use MutableRefObject instead of RefObject
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
-    // Cast the ref to satisfy Framer Motion's type requirements
     target: containerRef as React.RefObject<HTMLElement>,
     offset: ["start end", "end start"]
   });
 
-  const opacity = scrollYProgress;
-  
   return (
-    <motion.main 
-      style={{ opacity }} 
+    <motion.div 
+      style={{ opacity: scrollYProgress }} 
       className="pt-20" 
       ref={containerRef as React.RefObject<HTMLElement>}
     >
@@ -497,6 +493,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </motion.main>
+    </motion.div>
   );
 }

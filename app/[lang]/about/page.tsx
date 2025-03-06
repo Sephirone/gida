@@ -1,12 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { motion, useScroll, HTMLMotionProps } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
-
-// Type tanımlamaları
-type MotionMainProps = HTMLMotionProps<"main">;
 
 const translations = {
   tr: {
@@ -280,18 +277,14 @@ export default function About() {
     offset: ["start end", "end start"]
   });
 
-  const mainProps: MotionMainProps = {
-    ref: containerRef,
-    className: "pt-20",
-    style: { 
-      opacity: scrollYProgress 
-    },
-    initial: { opacity: 0 },
-    animate: { opacity: 1 }
-  };
-
   return (
-    <motion.main {...mainProps}>
+    <motion.main
+      ref={containerRef}
+      className="pt-20"
+      style={{ opacity: scrollYProgress }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
         <Image

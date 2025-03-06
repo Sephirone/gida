@@ -1,5 +1,3 @@
-import { HTMLMotionProps } from 'framer-motion';
-
 export type SupportedLanguages = 'tr' | 'en' | 'de' | 'ru' | 'ar';
 
 export interface AboutPageTranslations {
@@ -19,13 +17,5 @@ export interface AboutPageTranslations {
   vision: {
     title: string;
     description: string;
-  };
-  history: {
-    title: string;
-    timeline: Array<{
-      year: string;
-      title: string;
-      description: string;
-    }>;
   };
 }

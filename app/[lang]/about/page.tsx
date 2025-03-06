@@ -271,7 +271,8 @@ export default function AboutPage() {
   const currentLang = pathname.split('/')[1] || 'tr';
   const t = translations[currentLang as keyof typeof translations];
   
-  const containerRef = useRef(null);
+  // Fix: Properly type the ref as HTMLElement
+  const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]

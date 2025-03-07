@@ -1,6 +1,8 @@
-import { Fragment, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Menu, Transition } from '@headlessui/react';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -1,0 +1,13 @@
+{
+  "home": "Ana Sayfa",
+  "products": "Ürünler",
+  "about": "Hakkımızda",
+  "services": "Hizmetler",
+  "contact": "İletişim",
+  "hero": {
+    "title": "Ham Maddeler",
+    "subtitle": "Endüstriniz İçin",
+    "description": "Gıda, ilaç ve kimya endüstrileri için yüksek kaliteli ham maddeler sağlıyoruz.",
+    "cta": "Ürünleri Keşfet"
+  }
+}

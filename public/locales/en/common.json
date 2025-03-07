@@ -1,0 +1,13 @@
+{
+  "home": "Home",
+  "products": "Products",
+  "about": "About",
+  "services": "Services",
+  "contact": "Contact",
+  "hero": {
+    "title": "Raw Materials",
+    "subtitle": "For Your Industry",
+    "description": "We provide high-quality raw materials for food, pharmaceutical, and chemical industries.",
+    "cta": "Explore Products"
+  }
+}

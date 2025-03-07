@@ -159,25 +159,47 @@ const Header = () => {
   return (
     <header 
       className={`fixed w-full z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
+        isScrolled 
+          ? 'bg-gradient-to-r from-slate-900/95 to-blue-900/95 backdrop-blur-md shadow-lg text-white' 
+          : 'bg-white text-gray-800'
       }`}
     >
-      <div className="border-b border-gray-100">
+      <div className="border-b border-gray-100/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex-shrink-0">
               <Logo />
             </Link>
 
-            <div className="hidden lg:flex items-center space-x-4">
+            <div className="hidden md:flex space-x-1">
               {navigation.map((item) => (
-                <NavItem key={item.href} item={item} />
+                <NavItem 
+                  key={item.name} 
+                  item={item} 
+                  className={`
+                    px-4 py-2 rounded-full transition-all duration-300
+                    ${isScrolled 
+                      ? 'hover:bg-white/10 text-gray-100 hover:text-white' 
+                      : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600'
+                    }
+                  `}
+                />
               ))}
-              
+            </div>
+
+            <div className="hidden md:flex items-center space-x-4">
               <Menu as="div" className="relative">
-                <Menu.Button className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 rounded-md hover:bg-gray-50 transition-all duration-200">
+                <Menu.Button 
+                  className={`
+                    flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300
+                    ${isScrolled 
+                      ? 'hover:bg-white/10 text-gray-100' 
+                      : 'hover:bg-blue-50 text-gray-700'
+                    }
+                  `}
+                >
                   <HiOutlineGlobe className="w-5 h-5" />
-                  <span>{languages.find(lang => lang.code === router.locale)?.flag}</span>
+                  <span>{languages.find(lang => lang.code === router.locale)?.name}</span>
                   <HiChevronDown className="w-4 h-4" />
                 </Menu.Button>
                 <Transition
@@ -216,7 +238,7 @@ const Header = () => {
               </Menu>
             </div>
 
-            <Menu as="div" className="lg:hidden">
+            <Menu as="div" className="md:hidden">
               {({ open }) => (
                 <>
                   <Menu.Button className="p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200">

@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Menu, Transition } from '@headlessui/react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HiOutlineMenu, 
   HiX, 
@@ -12,13 +12,18 @@ import {
   HiOutlineLightBulb,
   HiOutlineSparkles,
   HiOutlinePhone,
-  HiChevronDown
+  HiChevronDown,
+  HiOutlineShoppingCart,
+  HiOutlineUserGroup,
+  HiOutlineDocumentText,
+  HiOutlineNewspaper
 } from 'react-icons/hi';
 
 const Header = () => {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,17 +37,32 @@ const Header = () => {
     { 
       name: 'Hakkımızda',
       href: '/about',
-      icon: <HiOutlineLightBulb className="w-5 h-5" />
+      icon: <HiOutlineLightBulb className="w-5 h-5" />,
+      submenu: [
+        { name: 'Şirket Profili', href: '/about/profile' },
+        { name: 'Tarihçe', href: '/about/history' },
+        { name: 'Yönetim', href: '/about/management' },
+      ]
     },
     {
       name: 'Ürünler',
       href: '/products',
-      icon: <HiOutlineCube className="w-5 h-5" />
+      icon: <HiOutlineCube className="w-5 h-5" />,
+      submenu: [
+        { name: 'Hammaddeler', href: '/products/raw-materials' },
+        { name: 'Kimyasallar', href: '/products/chemicals' },
+        { name: 'Endüstriyel', href: '/products/industrial' },
+      ]
     },
     { 
       name: 'Hizmetler',
       href: '/services',
-      icon: <HiOutlineSparkles className="w-5 h-5" />
+      icon: <HiOutlineSparkles className="w-5 h-5" />,
+      submenu: [
+        { name: 'Teknik Destek', href: '/services/technical-support' },
+        { name: 'Danışmanlık', href: '/services/consulting' },
+        { name: 'AR-GE', href: '/services/research' },
+      ]
     },
     { 
       name: 'İletişim',
@@ -55,8 +75,7 @@ const Header = () => {
     { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
     { code: 'en', name: 'English', flag: '🇬🇧' },
     { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
     { code: 'ar', name: 'العربية', flag: '🇸🇦' },
   ];
 
@@ -66,11 +85,12 @@ const Header = () => {
       animate={{ opacity: 1, x: 0 }}
       className="flex items-center space-x-2"
     >
-      <div className="relative w-10 h-10">
+      <div className="relative w-12 h-12">
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg"
+          className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl"
           animate={{
             rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.1, 1],
           }}
           transition={{
             duration: 20,
@@ -78,159 +98,197 @@ const Header = () => {
             repeat: Infinity,
           }}
         />
-        <div className="absolute inset-0.5 bg-white rounded-lg flex items-center justify-center">
-          <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-transparent bg-clip-text">N</span>
+        <div className="absolute inset-1 bg-white rounded-lg flex items-center justify-center">
+          <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">N</span>
         </div>
       </div>
-      <div className="text-xl font-bold">
-        <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-transparent bg-clip-text">Neo</span>
+      <div className="text-2xl font-bold">
+        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">Neo</span>
         <span className="text-gray-800">Mat</span>
       </div>
     </motion.div>
   );
 
-  const LanguageDropdown = () => (
-    <Menu as="div" className="relative inline-block text-left">
-      <Menu.Button className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-md hover:bg-gray-100">
-        <HiOutlineGlobe className="w-5 h-5" />
-        <span>{languages.find(lang => lang.code === router.locale)?.flag}</span>
-        <HiChevronDown className="w-4 h-4" />
-      </Menu.Button>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <div className="py-1">
-            {languages.map((language) => (
-              <Menu.Item key={language.code}>
-                {({ active }) => (
-                  <button
-                    onClick={() => router.push(router.pathname, router.pathname, {
-                      locale: language.code,
-                    })}
-                    className={`${
-                      active ? 'bg-gray-100' : ''
-                    } ${
-                      router.locale === language.code ? 'text-blue-600 font-medium' : 'text-gray-700'
-                    } flex items-center space-x-2 w-full px-4 py-2 text-sm`}
-                  >
-                    <span>{language.flag}</span>
-                    <span>{language.name}</span>
-                  </button>
-                )}
-              </Menu.Item>
-            ))}
-          </div>
-        </Menu.Items>
-      </Transition>
+  const NavItem = ({ item }) => (
+    <Menu as="div" className="relative">
+      {({ open }) => (
+        <>
+          <Menu.Button className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 rounded-md hover:bg-gray-50 transition-all duration-200">
+            {item.icon}
+            <span>{item.name}</span>
+            {item.submenu && (
+              <HiChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+            )}
+          </Menu.Button>
+
+          {item.submenu && (
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="p-2">
+                  {item.submenu.map((subItem) => (
+                    <Menu.Item key={subItem.href}>
+                      {({ active }) => (
+                        <Link
+                          href={subItem.href}
+                          className={`${
+                            active ? 'bg-gray-50 text-blue-600' : 'text-gray-700'
+                          } group flex items-center px-4 py-2 text-sm rounded-lg transition-all duration-200`}
+                        >
+                          {subItem.name}
+                        </Link>
+                      )}
+                    </Menu.Item>
+                  ))}
+                </div>
+              </Menu.Items>
+            </Transition>
+          )}
+        </>
+      )}
     </Menu>
   );
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-500 ${
-      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
-    }`}>
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
-            <Logo />
-          </Link>
+    <header 
+      className={`fixed w-full z-50 transition-all duration-500 ${
+        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
+      }`}
+    >
+      <div className="border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            <Link href="/" className="flex-shrink-0">
+              <Logo />
+            </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center space-x-2 text-gray-700 hover:text-blue-600 ${
-                  router.pathname === item.href ? 'font-semibold text-blue-600' : ''
-                }`}
-              >
-                {item.icon}
-                <span>{item.name}</span>
-              </Link>
-            ))}
-            
-            {/* Dil Seçimi Dropdown */}
-            <LanguageDropdown />
-          </div>
-
-          {/* Mobile Menu */}
-          <Menu as="div" className="lg:hidden">
-            {({ open }) => (
-              <>
-                <Menu.Button className="p-2 text-gray-700 hover:text-blue-600">
-                  {open ? (
-                    <HiX className="w-6 h-6" />
-                  ) : (
-                    <HiOutlineMenu className="w-6 h-6" />
-                  )}
+            <div className="hidden lg:flex items-center space-x-4">
+              {navigation.map((item) => (
+                <NavItem key={item.href} item={item} />
+              ))}
+              
+              <Menu as="div" className="relative">
+                <Menu.Button className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 rounded-md hover:bg-gray-50 transition-all duration-200">
+                  <HiOutlineGlobe className="w-5 h-5" />
+                  <span>{languages.find(lang => lang.code === router.locale)?.flag}</span>
+                  <HiChevronDown className="w-4 h-4" />
                 </Menu.Button>
                 <Transition
                   as={Fragment}
                   enter="transition ease-out duration-200"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
                   leave="transition ease-in duration-150"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
                 >
-                  <Menu.Items className="absolute right-0 w-full mt-2 origin-top-right bg-white divide-y divide-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="px-1 py-1">
-                      {navigation.map((item) => (
-                        <Menu.Item key={item.name}>
+                  <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="p-2">
+                      {languages.map((language) => (
+                        <Menu.Item key={language.code}>
                           {({ active }) => (
-                            <Link
-                              href={item.href}
-                              className={`${
-                                active ? 'bg-gray-100' : ''
-                              } group flex items-center space-x-2 rounded-md w-full px-4 py-3 text-sm text-gray-700`}
-                            >
-                              {item.icon}
-                              <span>{item.name}</span>
-                            </Link>
-                          )}
-                        </Menu.Item>
-                      ))}
-                      {/* Mobil Dil Seçimi */}
-                      <div className="px-4 py-3">
-                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                          Dil Seçimi
-                        </div>
-                        <div className="mt-2 grid grid-cols-2 gap-2">
-                          {languages.map((language) => (
                             <button
-                              key={language.code}
                               onClick={() => router.push(router.pathname, router.pathname, {
                                 locale: language.code,
                               })}
-                              className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md ${
-                                router.locale === language.code
-                                  ? 'bg-blue-50 text-blue-600'
-                                  : 'text-gray-700 hover:bg-gray-100'
-                              }`}
+                              className={`${
+                                active ? 'bg-gray-50' : ''
+                              } ${
+                                router.locale === language.code ? 'text-blue-600 font-medium' : 'text-gray-700'
+                              } flex items-center space-x-2 w-full px-4 py-2 text-sm rounded-lg transition-all duration-200`}
                             >
                               <span>{language.flag}</span>
                               <span>{language.name}</span>
                             </button>
-                          ))}
-                        </div>
-                      </div>
+                          )}
+                        </Menu.Item>
+                      ))}
                     </div>
                   </Menu.Items>
                 </Transition>
-              </>
-            )}
-          </Menu>
+              </Menu>
+            </div>
+
+            <Menu as="div" className="lg:hidden">
+              {({ open }) => (
+                <>
+                  <Menu.Button className="p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200">
+                    {open ? (
+                      <HiX className="w-6 h-6" />
+                    ) : (
+                      <HiOutlineMenu className="w-6 h-6" />
+                    )}
+                  </Menu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 w-full mt-2 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="p-4">
+                        {navigation.map((item) => (
+                          <div key={item.href} className="py-2">
+                            <div className="text-sm font-medium text-gray-900 mb-2">
+                              {item.name}
+                            </div>
+                            {item.submenu && (
+                              <div className="ml-4 space-y-1">
+                                {item.submenu.map((subItem) => (
+                                  <Link
+                                    key={subItem.href}
+                                    href={subItem.href}
+                                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
+                                  >
+                                    {subItem.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        <div className="py-2">
+                          <div className="text-sm font-medium text-gray-900 mb-2">
+                            Dil Seçimi
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {languages.map((language) => (
+                              <button
+                                key={language.code}
+                                onClick={() => router.push(router.pathname, router.pathname, {
+                                  locale: language.code,
+                                })}
+                                className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md ${
+                                  router.locale === language.code
+                                    ? 'bg-blue-50 text-blue-600'
+                                    : 'text-gray-700 hover:bg-gray-50'
+                                }`}
+                              >
+                                <span>{language.flag}</span>
+                                <span>{language.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </>
+              )}
+            </Menu>
+          </div>
         </div>
-      </nav>
+      </div>
     </header>
   );
 };

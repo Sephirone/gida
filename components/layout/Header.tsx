@@ -109,7 +109,17 @@ const Header = () => {
     </motion.div>
   );
 
-  const NavItem = ({ item }) => (
+  interface NavItemProps {
+    item: {
+      name: string;
+      href: string;
+      icon: Element;
+      submenu?: { name: string; href: string; }[];
+    };
+    className?: string;
+  }
+
+  const NavItem: React.FC<NavItemProps> = ({ item, className }) => (
     <Menu as="div" className="relative">
       {({ open }) => (
         <>

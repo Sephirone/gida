@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiMenu, HiX, HiChevronDown } from 'react-icons/hi';
+import { HiMenu, HiX, HiChevronDown, HiGlobe } from 'react-icons/hi';
+import { useRouter } from 'next/router';
+
+const languages = [
+  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+];
 
 const navigation = [
   {
@@ -27,9 +36,11 @@ const navigation = [
 ];
 
 const Header = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isLangOpen, setIsLangOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,17 +50,26 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLanguageChange = (langCode: string) => {
+    router.push(router.pathname, router.pathname, { locale: langCode });
+    setIsLangOpen(false);
+  };
+
   return (
     <header className={`
       fixed w-full z-50 transition-all duration-300
-      ${isScrolled ? 'bg-blue-600 shadow-lg' : 'bg-blue-500'}
+      ${isScrolled 
+        ? 'bg-gradient-to-r from-purple-600 to-blue-500 shadow-lg' 
+        : 'bg-gradient-to-r from-purple-500 to-blue-400'}
     `}>
-      <nav className="container mx-auto px-4">
+      <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+      <nav className="container mx-auto px-4 relative">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/" className="relative z-10">
+          <Link href="/" className="relative z-10 flex items-center space-x-2">
+            <img src="/chemix-logo.png" alt="ChemiX" className="h-10 w-auto" />
             <div className="text-2xl font-bold text-white">
-              LOGO
+              ChemiX
             </div>
           </Link>
 
@@ -82,13 +102,13 @@ const Header = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2"
+                        className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 backdrop-blur-lg bg-white/90"
                       >
                         {item.submenu.map((subItem) => (
                           <Link
                             key={subItem.name}
                             href={subItem.href}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600"
                           >
                             {subItem.name}
                           </Link>
@@ -101,10 +121,39 @@ const Header = () => {
             ))}
             
             {/* Language Selector */}
-            <div className="flex items-center space-x-2 text-white">
-              <button className="hover:text-blue-100 transition">TR</button>
-              <span>|</span>
-              <button className="hover:text-blue-100 transition">EN</button>
+            <div className="relative">
+              <button
+                onClick={() => setIsLangOpen(!isLangOpen)}
+                className="flex items-center space-x-1 text-white hover:text-blue-100 transition-colors"
+              >
+                <HiGlobe className="w-5 h-5" />
+                <span>{languages.find(lang => lang.code === router.locale)?.flag}</span>
+                <HiChevronDown className={`w-4 h-4 transition-transform duration-200 
+                  ${isLangOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {isLangOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 backdrop-blur-lg bg-white/90"
+                  >
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => handleLanguageChange(lang.code)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 flex items-center space-x-2"
+                      >
+                        <span>{lang.flag}</span>
+                        <span>{lang.name}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -129,14 +178,14 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white"
+            className="lg:hidden bg-white/95 backdrop-blur-lg"
           >
             <div className="container mx-auto px-4 py-4">
               {navigation.map((item) => (
                 <div key={item.name} className="py-2">
                   <Link
                     href={item.href}
-                    className="block text-gray-700 hover:text-blue-600 transition-colors"
+                    className="block text-gray-700 hover:text-purple-600 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}
@@ -147,7 +196,7 @@ const Header = () => {
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                          className="block text-sm text-gray-600 hover:text-purple-600 transition-colors"
                           onClick={() => setIsOpen(false)}
                         >
                           {subItem.name}
@@ -159,10 +208,21 @@ const Header = () => {
               ))}
               
               {/* Mobile Language Selector */}
-              <div className="flex items-center space-x-2 py-2 text-gray-700">
-                <button className="hover:text-blue-600 transition">TR</button>
-                <span>|</span>
-                <button className="hover:text-blue-600 transition">EN</button>
+              <div className="py-2 border-t mt-2">
+                <div className="text-sm text-gray-500 mb-2">Dil Seçimi</div>
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      handleLanguageChange(lang.code);
+                      setIsOpen(false);
+                    }}
+                    className="block w-full text-left px-2 py-2 text-gray-700 hover:text-purple-600 flex items-center space-x-2"
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </motion.div>

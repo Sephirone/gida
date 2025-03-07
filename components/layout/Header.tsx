@@ -16,7 +16,11 @@ import {
   HiOutlineShoppingCart,
   HiOutlineUserGroup,
   HiOutlineDocumentText,
-  HiOutlineNewspaper
+  HiOutlineNewspaper,
+  HiHome,
+  HiUser,
+  HiDocument,
+  HiCog
 } from 'react-icons/hi';
 
 const Header = () => {
@@ -33,42 +37,31 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navigation = [
-    { 
-      name: 'Hakkımızda',
-      href: '/about',
-      icon: <HiOutlineLightBulb className="w-5 h-5" />,
+  const navigationItems: NavItem[] = [
+    {
+      name: "Home",
+      href: "/",
+      icon: <HiHome className="w-5 h-5" />,
+    },
+    {
+      name: "About",
+      href: "/about",
+      icon: <HiUser className="w-5 h-5" />,
+    },
+    {
+      name: "Services",
+      href: "/services",
+      icon: <HiDocument className="w-5 h-5" />,
       submenu: [
-        { name: 'Şirket Profili', href: '/about/profile' },
-        { name: 'Tarihçe', href: '/about/history' },
-        { name: 'Yönetim', href: '/about/management' },
+        { name: "Service 1", href: "/services/1" },
+        { name: "Service 2", href: "/services/2" },
       ]
     },
     {
-      name: 'Ürünler',
-      href: '/products',
-      icon: <HiOutlineCube className="w-5 h-5" />,
-      submenu: [
-        { name: 'Hammaddeler', href: '/products/raw-materials' },
-        { name: 'Kimyasallar', href: '/products/chemicals' },
-        { name: 'Endüstriyel', href: '/products/industrial' },
-      ]
-    },
-    { 
-      name: 'Hizmetler',
-      href: '/services',
-      icon: <HiOutlineSparkles className="w-5 h-5" />,
-      submenu: [
-        { name: 'Teknik Destek', href: '/services/technical-support' },
-        { name: 'Danışmanlık', href: '/services/consulting' },
-        { name: 'AR-GE', href: '/services/research' },
-      ]
-    },
-    { 
-      name: 'İletişim',
-      href: '/contact',
-      icon: <HiOutlinePhone className="w-5 h-5" />
-    },
+      name: "Settings",
+      href: "/settings",
+      icon: <HiCog className="w-5 h-5" />,
+    }
   ];
 
   const languages = [
@@ -109,14 +102,14 @@ const Header = () => {
     </motion.div>
   );
 
-  interface NavItemProps {
-    item: {
-      name: string;
-      href: string;
-      icon: Element;
-      submenu?: { name: string; href: string; }[];
-    };
-    className?: string;
+  interface NavItem {
+    name: string;
+    href: string;
+    icon: ReactNode;
+    submenu?: { 
+      name: string; 
+      href: string; 
+    }[];
   }
 
   const NavItem: React.FC<NavItemProps> = ({ item, className }) => (
@@ -182,7 +175,7 @@ const Header = () => {
             </Link>
 
             <div className="hidden md:flex space-x-1">
-              {navigation.map((item) => (
+              {navigationItems.map((item) => (
                 <NavItem 
                   key={item.name} 
                   item={item} 
@@ -269,7 +262,7 @@ const Header = () => {
                   >
                     <Menu.Items className="absolute right-0 w-full mt-2 origin-top-right bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="p-4">
-                        {navigation.map((item) => (
+                        {navigationItems.map((item) => (
                           <div key={item.href} className="py-2">
                             <div className="text-sm font-medium text-gray-900 mb-2">
                               {item.name}

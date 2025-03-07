@@ -11,7 +11,8 @@ import {
   HiOutlineCube,
   HiOutlineLightBulb,
   HiOutlineSparkles,
-  HiOutlinePhone
+  HiOutlinePhone,
+  HiChevronDown
 } from 'react-icons/hi';
 
 const Header = () => {
@@ -50,6 +51,15 @@ const Header = () => {
     },
   ];
 
+  const languages = [
+    { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+  ];
+
   const Logo = () => (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -79,6 +89,49 @@ const Header = () => {
     </motion.div>
   );
 
+  const LanguageDropdown = () => (
+    <Menu as="div" className="relative inline-block text-left">
+      <Menu.Button className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-md hover:bg-gray-100">
+        <HiOutlineGlobe className="w-5 h-5" />
+        <span>{languages.find(lang => lang.code === router.locale)?.flag}</span>
+        <HiChevronDown className="w-4 h-4" />
+      </Menu.Button>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <div className="py-1">
+            {languages.map((language) => (
+              <Menu.Item key={language.code}>
+                {({ active }) => (
+                  <button
+                    onClick={() => router.push(router.pathname, router.pathname, {
+                      locale: language.code,
+                    })}
+                    className={`${
+                      active ? 'bg-gray-100' : ''
+                    } ${
+                      router.locale === language.code ? 'text-blue-600 font-medium' : 'text-gray-700'
+                    } flex items-center space-x-2 w-full px-4 py-2 text-sm`}
+                  >
+                    <span>{language.flag}</span>
+                    <span>{language.name}</span>
+                  </button>
+                )}
+              </Menu.Item>
+            ))}
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
+  );
+
   return (
     <header className={`fixed w-full z-50 transition-all duration-500 ${
       isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
@@ -105,16 +158,8 @@ const Header = () => {
               </Link>
             ))}
             
-            {/* Dil Seçimi */}
-            <button
-              onClick={() => router.push(router.pathname, router.pathname, {
-                locale: router.locale === 'en' ? 'tr' : 'en',
-              })}
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
-            >
-              <HiOutlineGlobe className="w-5 h-5" />
-              <span>{router.locale === 'en' ? 'TR' : 'EN'}</span>
-            </button>
+            {/* Dil Seçimi Dropdown */}
+            <LanguageDropdown />
           </div>
 
           {/* Mobile Menu */}
@@ -154,21 +199,30 @@ const Header = () => {
                           )}
                         </Menu.Item>
                       ))}
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button
-                            onClick={() => router.push(router.pathname, router.pathname, {
-                              locale: router.locale === 'en' ? 'tr' : 'en',
-                            })}
-                            className={`${
-                              active ? 'bg-gray-100' : ''
-                            } group flex items-center space-x-2 rounded-md w-full px-4 py-3 text-sm text-gray-700`}
-                          >
-                            <HiOutlineGlobe className="w-5 h-5" />
-                            <span>{router.locale === 'en' ? 'TR' : 'EN'}</span>
-                          </button>
-                        )}
-                      </Menu.Item>
+                      {/* Mobil Dil Seçimi */}
+                      <div className="px-4 py-3">
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Dil Seçimi
+                        </div>
+                        <div className="mt-2 grid grid-cols-2 gap-2">
+                          {languages.map((language) => (
+                            <button
+                              key={language.code}
+                              onClick={() => router.push(router.pathname, router.pathname, {
+                                locale: language.code,
+                              })}
+                              className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md ${
+                                router.locale === language.code
+                                  ? 'bg-blue-50 text-blue-600'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <span>{language.flag}</span>
+                              <span>{language.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </Menu.Items>
                 </Transition>
